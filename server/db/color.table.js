@@ -7,30 +7,42 @@ var colorMap = {};
 var colorAbbr = ['R', 'YR', 'Y', 'GY', 'G', 'BG', 'B', 'PB', 'P', 'RP'];
 var levelsArr = ['2.5', '5', '7.5', '10'];
 
+var colorTable = [];
 var counter = 0;
+
 colorAbbr.forEach(function(abbr) {
   levelsArr.forEach(function(level) {
     colorMap[level + abbr] = counter;
+    colorTable[counter] = [level + abbr];
+    for (var j = 1; j <= 9; j++) {
+      colorTable[counter][j] = [];
+    }
     counter++;
   });
 });
 
 
-var colorTable = [];
 
-for (var i = 0; i < 40; i++) {
-  colorTable[i] = [];
-  for (var j = 0; j < 9; j++) {
-    colorTable[i][j] = [];
-  }
-}
+// for (var i = 1; i <= 40; i++) {
+//   colorTable[i] = [];
+//   for (var j = 0; j < 9; j++) {
+//     colorTable[i][j] = [];
+//   }
+// }
 
 function addToArray(color) {
   if (colorMap[color.h] === undefined) return;
   var colIndex = colorMap[color.h];
-  var colValue = color.V - 1;
+  var colValue = color.V;
   var colChroma = (color.C/2) - 1;
-  var newColorVals = { r: color.dR, g: color.dG, b: color.dB };
+  var newColorVals = {
+    colIdx: colIndex,
+    colValue: colValue,
+    colChroma: colChroma,
+    r: color.dR,
+    g: color.dG,
+    b: color.dB
+  };
   colorTable[colIndex][colValue][colChroma] = newColorVals;
 }
 //end_parsed will be emitted once parsing finished

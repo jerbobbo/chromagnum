@@ -1,7 +1,9 @@
 <div>
   <div class="row">
     <div class="col-sm-6">
-      <div class="chip" style="background-color: rgb({{ currentColor.r }}, {{ currentColor.g }}, {{ currentColor.b }});"></span>
+      <h5>{{ currentColor.hue }}</h5>
+      <div class="chip" style="background-color: rgb({{ currentColor.values.r }}, {{ currentColor.values.g }}, {{ currentColor.values.b }});"></span>
     </div>
+      <button class="btn btn-primary" ng-click="moreHue('blue')">moreHue</button>
   </div>
 </div>
