@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "angular": "^1.5.5",
+    "angular-ui-router": "^0.2.18",
     "bootstrap": "^3.3.6",
     "csv": "^0.4.6",
     "csvtojson": "^0.5.10",
