@@ -61,7 +61,29 @@ app.factory('ColorTableFactory', function($http) {
         targetChroma = _colorTable[newColIdx][curr.colValue].length - 1;
 
       return _colorTable[newColIdx][curr.colValue][targetChroma];
+    },
+
+    moreContrast: function(curr) {
+      var targetChroma = curr.colChroma + 1;
+      return _colorTable[curr.colIdx][curr.colValue][targetChroma] || curr;
+
+    },
+
+    lessContrast: function(curr) {
+      var targetChroma = curr.colChroma - 1;
+      return _colorTable[curr.colIdx][curr.colValue][targetChroma] || curr;
+    },
+
+    lighter: function(curr) {
+      var targetValue = curr.colValue + 1;
+      return _colorTable[curr.colIdx][targetValue][curr.colChroma] || curr;
+    },
+
+    darker: function(curr) {
+      var targetValue = curr.colValue - 1;
+      return _colorTable[curr.colIdx][targetValue][curr.colChroma] || curr;
     }
+
   };
 });
 
@@ -71,7 +93,7 @@ app.controller('ColorTableCtrl', function($scope, ColorTableFactory, colorTable)
 
   $scope.currentColor = {
     hue: $scope.colorTable[0][0],
-    values: $scope.colorTable[0][5][5]
+    values: $scope.colorTable[0][5][3]
   };
 
   $scope.moreHue = function(targetHue) {
@@ -82,8 +104,43 @@ app.controller('ColorTableCtrl', function($scope, ColorTableFactory, colorTable)
     };
   };
 
-  $scope.savedColors = [];
+  $scope.moreContrast = function() {
+    var newColor = ColorTableFactory.moreContrast($scope.currentColor.values);
+    $scope.currentColor = {
+      hue: $scope.colorTable[newColor.colIdx][0],
+      values: newColor
+    };
+  };
 
+  $scope.lessContrast = function() {
+    var newColor = ColorTableFactory.lessContrast($scope.currentColor.values);
+    $scope.currentColor = {
+      hue: $scope.colorTable[newColor.colIdx][0],
+      values: newColor
+    };
+  };
+
+  $scope.lighter = function() {
+    var newColor = ColorTableFactory.lighter($scope.currentColor.values);
+    $scope.currentColor = {
+      hue: $scope.colorTable[newColor.colIdx][0],
+      values: newColor
+    };
+  };
+
+  $scope.darker = function() {
+    var newColor = ColorTableFactory.darker($scope.currentColor.values);
+    $scope.currentColor = {
+      hue: $scope.colorTable[newColor.colIdx][0],
+      values: newColor
+    };
+  };
+
+  $scope.save = function() {
+    $scope.savedColors.push($scope.currentColor);
+  };
+
+  $scope.savedColors = [];
 
 
 });

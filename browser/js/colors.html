@@ -2,8 +2,20 @@
   <div class="row">
     <div class="col-sm-6">
       <h5>{{ currentColor.hue }}</h5>
-      <div class="chip" style="background-color: rgb({{ currentColor.values.r }}, {{ currentColor.values.g }}, {{ currentColor.values.b }});"></span>
+      <div class="main-color" style="background-color: rgb({{ currentColor.values.r }}, {{ currentColor.values.g }}, {{ currentColor.values.b }});"></span>
     </div>
       <button class="btn btn-primary" ng-click="moreHue('blue')">moreHue</button>
+      <button class="btn btn-primary" ng-click="moreContrast()">moreContrast</button>
+      <button class="btn btn-primary" ng-click="lessContrast()">lessContrast</button>
+      <button class="btn btn-primary" ng-click="lighter()">lighter</button>
+      <button class="btn btn-primary" ng-click="darker()">darker</button>
+      <button class="btn btn-info" ng-click="save()">save</button>
+  </div>
+</div>
+
+<div id="saved-chips" class="row">
+  <div class="col-sm-6">
+    <div ng-repeat="color in savedColors" class="chip" style="background-color: rgb({{ color.values.r }}, {{ color.values.g }}, {{ color.values.b }});">
+    </div>
   </div>
 </div>
