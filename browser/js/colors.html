@@ -1,18 +1,22 @@
 <div>
   <div class="row">
     <div class="col-md-5">
-      <h5>{{ currentColor.hue }}</h5>
-      <div class="main-color" style="background-color: rgb({{ currentColor.values.r }}, {{ currentColor.values.g }}, {{ currentColor.values.b }});"></span>
+      <!-- <label><h3>{{ currentColor.hue }}</h3></label> -->
+
+      <div class="main-color" style="background-color: rgb({{ getCurrentColor().values.r }}, {{ getCurrentColor().values.g }}, {{ getCurrentColor().values.b }});"></span>
     </div>
+    <div ng-hide="true">
       <button class="btn btn-primary" ng-click="moreHue('blue')">moreHue</button>
       <button class="btn btn-primary" ng-click="moreContrast()">moreContrast</button>
       <button class="btn btn-primary" ng-click="lessContrast()">lessContrast</button>
       <button class="btn btn-primary" ng-click="lighter()">lighter</button>
       <button class="btn btn-primary" ng-click="darker()">darker</button>
       <button class="btn btn-info" ng-click="save()">save</button>
+    </div>
+
   </div>
 
-  <div >
+  <div>
     <div id="palette">
       <div ng-repeat="value in currentPalette" class="col-md-7">
         <div ng-repeat="color in value" class="mini-chip" ng-class="{ active: color === currentColor.values }" style="background-color: rgb({{ color.r }}, {{ color.g }}, {{ color.b }});">

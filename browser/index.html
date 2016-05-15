@@ -4,13 +4,19 @@
   <link rel="stylesheet" type="text/css" href="/style.css" />
   <script src="/angular/angular.js"></script>
   <script src="/angular-ui-router/release/angular-ui-router.js"></script>
-
+  <script src="/annyang/annyang.min.js"></script>
+  <script src="/annyang/annyang.config.js"></script>
 </head>
 <body ng-app="app">
+    <div class="container">
+      <h3>CHROMAGNUM</h3>
+    </div>
   <div class="container" id="main">
     <ui-view></ui-view>
   </div>
   <script src="/app.js"></script>
-  <script src="/js/colors.js"></script>
+  <script src="/js/colors.factory.js"></script>
+  <script src="/js/colors.controller.js"></script>
+  <script src="/js/colors.state.js"></script>
 </body>
 </html>

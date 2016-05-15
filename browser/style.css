@@ -5,8 +5,8 @@ div.main-color {
   height: 250px;
 }
 
-div.palette {
-  padding-top: 100px;
+#palette {
+  margin-top: 40px;
 }
 
 div.chip {
