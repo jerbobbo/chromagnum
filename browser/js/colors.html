@@ -19,7 +19,7 @@
   <div>
     <div id="palette">
       <div ng-repeat="value in currentPalette" class="col-md-7">
-        <div ng-repeat="color in value" class="mini-chip" ng-class="{ active: color === currentColor.values }" style="background-color: rgb({{ color.r }}, {{ color.g }}, {{ color.b }});">
+        <div ng-repeat="color in value" ng-click="setColor(color)" class="mini-chip" ng-class="{ active: color === currentColor.values }" style="background-color: rgb({{ color.r }}, {{ color.g }}, {{ color.b }});">
         </div>
       </div>
     </div>
