@@ -121,108 +121,127 @@ app.controller('3dViewCtrl', function($scope, ColorTableFactory, colorTable) {
  //  });
  //
  //  annyang.start({autoRestart: true});
+var scene, container, renderer, camera, controls, raycaster, mouse;
+var cubes = [];
 
- var container = document.getElementById( 'threedview' );
- containerWidth = container.clientWidth;
- containerHeight = container.clientHeight;
- console.log(containerWidth, containerHeight);
+init();
+render();
 
- var scene = new THREE.Scene();
- scene.add( new THREE.AmbientLight( 0x555555 ) );
- var light = new THREE.SpotLight( 0xffffff, 1.5 );
- light.position.set( 0, 500, 2000 );
- scene.add( light );
- var cubes = new THREE.Object3D();
- camera = new THREE.PerspectiveCamera( 70, containerWidth / containerHeight, 1, 10000 );
- //camera.position.z = 1000;
- //camera.position.y = 500;
- controls = new THREE.TrackballControls( camera );
- controls.rotateSpeed = 1.0;
- controls.zoomSpeed = 1.2;
- controls.panSpeed = 0.8;
- controls.noZoom = false;
- controls.noPan = false;
- controls.staticMoving = true;
- controls.dynamicDampingFactor = 0.3;
+function init() {
+  container = document.getElementById( 'threedview' );
+  containerWidth = container.clientWidth;
+  containerHeight = container.clientHeight;
+  console.log(containerWidth, containerHeight);
 
-
-
- var pickingData = [], pickingTexture, pickingScene;
- pickingScene = new THREE.Scene();
- pickingTexture = new THREE.WebGLRenderTarget( containerHeight, containerWidth );
- pickingTexture.texture.minFilter = THREE.LinearFilter;
-
- var renderer = new THREE.WebGLRenderer();
- renderer.setClearColor("rgb(100,100,100)");
- renderer.setSize( containerWidth, containerHeight );
- container.appendChild( renderer.domElement );
+  scene = new THREE.Scene();
+  scene.add( new THREE.AmbientLight( 0x555555 ) );
+  var light = new THREE.SpotLight( 0xffffff, 1.5 );
+  light.position.set( 0, 500, 2000 );
+  scene.add( light );
+  cubes = new THREE.Object3D();
+  camera = new THREE.PerspectiveCamera( 70, containerWidth / containerHeight, 1, 10000 );
+  //camera.position.z = 1000;
+  //camera.position.y = 500;
+  controls = new THREE.TrackballControls( camera );
+  controls.rotateSpeed = 1.0;
+  controls.zoomSpeed = 1.2;
+  controls.panSpeed = 0.8;
+  controls.noZoom = false;
+  controls.noPan = false;
+  controls.staticMoving = true;
+  controls.dynamicDampingFactor = 0.3;
 
 
- for ( var i = 0; i < _colorTable.length; i ++ ) {
-   var angle = i/_colorTable.length * 2 * Math.PI;
-   for ( var j = 1; j < _colorTable[i].length; j++) {
-     for (var k = 0; k < _colorTable[i][j].length; k++) {
-       var geometry = new THREE.BoxGeometry( 1, .2, 1 );
-       geometry.rotateZ(angle);
-       var xVal = Math.cos(angle) * (k+5) * 1.3;
-       var zVal = Math.sin(angle) * (k+5) * 1.3;
-       geometry.translate(xVal,zVal,j*1.2);
-       //geometry.translate(i,j,k);
-       //geometry.rotateY(angle);
-       var newColor = new THREE.Color();
-       newColor.setRGB(_colorTable[i][j][k].r/255, _colorTable[i][j][k].g/255, _colorTable[i][j][k].b/255);
-       var material = new THREE.MeshBasicMaterial( { color: newColor } );
-       var cube = new THREE.Mesh( geometry, material );
-       //cube.rotateY(angle);
 
-       cubes.add( cube );
-     }
-   }
- }
+  // var pickingData = [], pickingTexture, pickingScene;
+  // pickingScene = new THREE.Scene();
+  // pickingTexture = new THREE.WebGLRenderTarget( containerHeight, containerWidth );
+  // pickingTexture.texture.minFilter = THREE.LinearFilter;
 
- scene.add( cubes );
+  //renderer = new THREE.CanvasRenderer();
+  renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor("rgb(100,100,100)");
+  renderer.setSize( containerWidth, containerHeight );
+  container.appendChild( renderer.domElement );
 
- camera.position.z = 50;
+  for ( var i = 0; i < _colorTable.length; i ++ ) {
+    var angle = i/_colorTable.length * 2 * Math.PI;
+    for ( var j = 1; j < _colorTable[i].length; j++) {
+      for (var k = 0; k < _colorTable[i][j].length; k++) {
+        var geometry = new THREE.BoxGeometry( 1, .2, 1 );
+        geometry.rotateZ(angle);
+        var xVal = Math.cos(angle) * (k+5) * 1.3;
+        var zVal = Math.sin(angle) * (k+5) * 1.3;
+        geometry.translate(xVal,zVal,j*1.2);
+        //geometry.translate(i,j,k);
+        //geometry.rotateY(angle);
+        var newColor = new THREE.Color();
+        newColor.setRGB(_colorTable[i][j][k].r/255, _colorTable[i][j][k].g/255, _colorTable[i][j][k].b/255);
+        var material = new THREE.MeshBasicMaterial( { color: newColor } );
+        var cube = new THREE.Mesh( geometry, material );
+        //cube.rotateY(angle);
+        cube.hueIdx = i;
+        cube.valueIdx = j;
+        cube.chromaIdx = k;
 
- projector = new THREE.Projector();
- mouseVector = new THREE.Vector3();
- window.addEventListener( 'mousemove', onMouseMove, false );
-
-function onMouseMove( e ) {
-  // mouseVector.x = 2 * (e.clientX / containerWidth) - 1;
-  // mouseVector.y = 1 - 2 * ( e.clientY / containerHeight );
-  mouseVector.x = 2 * (e.clientX / containerWidth) - 1;
-  mouseVector.y = 1 - 2 * ( e.clientY / containerHeight );
-
-raycaster = new THREE.Raycaster();
-var rayCast = raycaster.setFromCamera( mouseVector.clone(), camera );
-var intersects = raycaster.intersectObjects( cubes.children );
-
-// mouseVector.clone().unproject( self._camera );
-// raycaster.set( self._camera.position, mouseVector.clone*.sub( self._camera.position ).normalize() );
-// var intersects = raycaster.intersectObjects( objects);
-
-  // var raycaster = projector.raycaster.setFromCamera( mouseVector.clone(), camera );
-  // var intersects = raycaster.intersectObjects( cubes.children );
-
-  for( var i = 0; i < intersects.length; i++ ) {
-      var intersection = intersects[ i ],
-          obj = intersection.object;
-
-      obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
+        cubes.add( cube );
+      }
+    }
   }
+
+  scene.add( cubes );
+
+  raycaster = new THREE.Raycaster();
+	mouse = new THREE.Vector2();
+
+
+  document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+  document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+  window.addEventListener( 'resize', onWindowResize, false );
+
+
+  camera.position.z = 50;
 }
 
 
- window.addEventListener( 'resize', onWindowResize, false );
+ function onDocumentMouseDown( event ) {
+ 				event.preventDefault();
+ 				mouse.x = ( event.clientX / container.clientWidth )*.78 - 1;
+ 				mouse.y = - ( event.clientY / container.clientHeight )*1.2 + 1;
+ 				raycaster.setFromCamera( mouse, camera );
+ 				var intersects = raycaster.intersectObjects( cubes.children );
+ 				if ( intersects.length > 0 ) {
+          var data = intersects[0].object;
+ 					data.material.color.setHex( Math.random() * 0xffffff );
+          $scope.setColor(_colorTable[data.hueIdx][data.valueIdx][data.chromaIdx]);
+          $scope.$digest();
+          console.log(intersects[0].object.hueIdx);
+          console.log(mouse.x, mouse.y);
+ 				}
+ 				/*
+ 				// Parse all the faces
+ 				for ( var i in intersects ) {
+ 					intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
+ 				}
+ 				*/
+ 			}
 
-function onWindowResize( e ) {
-        containerWidth = container.clientWidth;
-        containerHeight = container.clientHeight;
-        renderer.setSize( containerWidth, containerHeight );
-        camera.aspect = containerWidth / containerHeight;
-        camera.updateProjectionMatrix();
-}
+
+function onDocumentTouchStart( event ) {
+
+				event.preventDefault();
+
+				event.clientX = event.touches[0].clientX;
+				event.clientY = event.touches[0].clientY;
+				onDocumentMouseDown( event );
+			}
+
+
+function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
 
  function render() {
    controls.update();
@@ -230,7 +249,7 @@ function onWindowResize( e ) {
     renderer.render( scene, camera );
 
  }
- render();
+
 
 
  // var container, stats;
