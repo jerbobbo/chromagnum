@@ -123,6 +123,10 @@ app.controller('3dViewCtrl', function($scope, ColorTableFactory, colorTable) {
  //  annyang.start({autoRestart: true});
 
  var scene = new THREE.Scene();
+ scene.add( new THREE.AmbientLight( 0x555555 ) );
+ var light = new THREE.SpotLight( 0xffffff, 1.5 );
+ light.position.set( 0, 500, 2000 );
+ scene.add( light );
  camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
  camera.position.z = 1000;
  controls = new THREE.TrackballControls( camera );
@@ -140,14 +144,22 @@ app.controller('3dViewCtrl', function($scope, ColorTableFactory, colorTable) {
 
 
  for ( var i = 0; i < _colorTable.length; i ++ ) {
+   var angle = i/_colorTable.length * 2 * Math.PI;
    for ( var j = 0; j < _colorTable[i].length; j++) {
      for (var k = 0; k < _colorTable[i][j].length; k++) {
-       var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-       geometry.translate(i,j,k);
+       var geometry = new THREE.BoxGeometry( 1, .2, 1 );
+       geometry.rotateZ(angle);
+       var xVal = Math.cos(angle) * (k+1) * 1.3;
+       var zVal = Math.sin(angle) * (k+1) * 1.3;
+       geometry.translate(xVal,zVal,j*1.2);
+       //geometry.translate(i,j,k);
+       //geometry.rotateY(angle);
        var newColor = new THREE.Color();
        newColor.setRGB(_colorTable[i][j][k].r/255, _colorTable[i][j][k].g/255, _colorTable[i][j][k].b/255);
        var material = new THREE.MeshBasicMaterial( { color: newColor } );
        var cube = new THREE.Mesh( geometry, material );
+       //cube.rotateY(angle);
+
        scene.add( cube );
      }
    }
