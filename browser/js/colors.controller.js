@@ -121,5 +121,5 @@ app.controller('ColorTableCtrl', function($scope, ColorTableFactory, colorTable)
  //  });
  //
  //  annyang.start({autoRestart: true});
-
+ 
 });
