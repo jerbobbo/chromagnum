@@ -122,13 +122,20 @@ app.controller('3dViewCtrl', function($scope, ColorTableFactory, colorTable) {
  //
  //  annyang.start({autoRestart: true});
 
+ var container = document.getElementById( 'threedview' );
+ containerWidth = container.clientWidth;
+ containerHeight = container.clientHeight;
+ console.log(containerWidth, containerHeight);
+
  var scene = new THREE.Scene();
  scene.add( new THREE.AmbientLight( 0x555555 ) );
  var light = new THREE.SpotLight( 0xffffff, 1.5 );
  light.position.set( 0, 500, 2000 );
  scene.add( light );
- camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
- camera.position.z = 1000;
+ var cubes = new THREE.Object3D();
+ camera = new THREE.PerspectiveCamera( 70, containerWidth / containerHeight, 1, 10000 );
+ //camera.position.z = 1000;
+ //camera.position.y = 500;
  controls = new THREE.TrackballControls( camera );
  controls.rotateSpeed = 1.0;
  controls.zoomSpeed = 1.2;
@@ -138,19 +145,27 @@ app.controller('3dViewCtrl', function($scope, ColorTableFactory, colorTable) {
  controls.staticMoving = true;
  controls.dynamicDampingFactor = 0.3;
 
+
+
+ var pickingData = [], pickingTexture, pickingScene;
+ pickingScene = new THREE.Scene();
+ pickingTexture = new THREE.WebGLRenderTarget( containerHeight, containerWidth );
+ pickingTexture.texture.minFilter = THREE.LinearFilter;
+
  var renderer = new THREE.WebGLRenderer();
- renderer.setSize( window.innerWidth, window.innerHeight );
- document.body.appendChild( renderer.domElement );
+ renderer.setClearColor("rgb(100,100,100)");
+ renderer.setSize( containerWidth, containerHeight );
+ container.appendChild( renderer.domElement );
 
 
  for ( var i = 0; i < _colorTable.length; i ++ ) {
    var angle = i/_colorTable.length * 2 * Math.PI;
-   for ( var j = 0; j < _colorTable[i].length; j++) {
+   for ( var j = 1; j < _colorTable[i].length; j++) {
      for (var k = 0; k < _colorTable[i][j].length; k++) {
        var geometry = new THREE.BoxGeometry( 1, .2, 1 );
        geometry.rotateZ(angle);
-       var xVal = Math.cos(angle) * (k+1) * 1.3;
-       var zVal = Math.sin(angle) * (k+1) * 1.3;
+       var xVal = Math.cos(angle) * (k+5) * 1.3;
+       var zVal = Math.sin(angle) * (k+5) * 1.3;
        geometry.translate(xVal,zVal,j*1.2);
        //geometry.translate(i,j,k);
        //geometry.rotateY(angle);
@@ -160,12 +175,54 @@ app.controller('3dViewCtrl', function($scope, ColorTableFactory, colorTable) {
        var cube = new THREE.Mesh( geometry, material );
        //cube.rotateY(angle);
 
-       scene.add( cube );
+       cubes.add( cube );
      }
    }
  }
 
- camera.position.z = 5;
+ scene.add( cubes );
+
+ camera.position.z = 50;
+
+ projector = new THREE.Projector();
+ mouseVector = new THREE.Vector3();
+ window.addEventListener( 'mousemove', onMouseMove, false );
+
+function onMouseMove( e ) {
+  // mouseVector.x = 2 * (e.clientX / containerWidth) - 1;
+  // mouseVector.y = 1 - 2 * ( e.clientY / containerHeight );
+  mouseVector.x = 2 * (e.clientX / containerWidth) - 1;
+  mouseVector.y = 1 - 2 * ( e.clientY / containerHeight );
+
+raycaster = new THREE.Raycaster();
+var rayCast = raycaster.setFromCamera( mouseVector.clone(), camera );
+var intersects = raycaster.intersectObjects( cubes.children );
+
+// mouseVector.clone().unproject( self._camera );
+// raycaster.set( self._camera.position, mouseVector.clone*.sub( self._camera.position ).normalize() );
+// var intersects = raycaster.intersectObjects( objects);
+
+  // var raycaster = projector.raycaster.setFromCamera( mouseVector.clone(), camera );
+  // var intersects = raycaster.intersectObjects( cubes.children );
+
+  for( var i = 0; i < intersects.length; i++ ) {
+      var intersection = intersects[ i ],
+          obj = intersection.object;
+
+      obj.material.color.setRGB( 1.0 - i / intersects.length, 0, 0 );
+  }
+}
+
+
+ window.addEventListener( 'resize', onWindowResize, false );
+
+function onWindowResize( e ) {
+        containerWidth = container.clientWidth;
+        containerHeight = container.clientHeight;
+        renderer.setSize( containerWidth, containerHeight );
+        camera.aspect = containerWidth / containerHeight;
+        camera.updateProjectionMatrix();
+}
 
  function render() {
    controls.update();

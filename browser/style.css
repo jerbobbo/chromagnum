@@ -39,3 +39,7 @@ div.mini-chip.active {
   background-color: rgb(100,100,100);
   width:80%;
 }
+
+#threedview {
+  height: 600px;
+}
