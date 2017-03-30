@@ -170,9 +170,9 @@ function init() {
       for (var k = 0; k < _colorTable[i][j].length; k++) {
         var geometry = new THREE.BoxGeometry( 1, .2, 1 );
         geometry.rotateZ(angle);
-        var xVal = Math.cos(angle) * (k+5) * 1.3;
-        var zVal = Math.sin(angle) * (k+5) * 1.3;
-        geometry.translate(xVal,zVal,j*1.2);
+        var xVal = Math.cos(angle) * (k+5) * 1.4;
+        var zVal = Math.sin(angle) * (k+5) * 1.4;
+        geometry.translate(xVal,zVal,j*1.4);
         //geometry.translate(i,j,k);
         //geometry.rotateY(angle);
         var newColor = new THREE.Color();
@@ -206,7 +206,7 @@ function init() {
 
  function onDocumentMouseDown( event ) {
  				event.preventDefault();
- 				mouse.x = ( event.clientX / container.clientWidth )*.78 - 1;
+ 				mouse.x = ( event.clientX / container.clientWidth )*0.8 - 1;
  				mouse.y = - ( event.clientY / container.clientHeight )*1.2 + 1;
  				raycaster.setFromCamera( mouse, camera );
  				var intersects = raycaster.intersectObjects( cubes.children );
